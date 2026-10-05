@@ -239,12 +239,110 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,6vw,54px);lette
 #session .practice-title .source{font-weight:600;color:#cdd1de;letter-spacing:.01em}
 #session .practice-title .detail{opacity:.68}
 </style>
+<style id="pg-v23">
+/* ===== v23: tools, break screen, notes, metronome, weekly report ===== */
+.tools{display:flex;gap:10px;align-items:center}
+.tool{display:grid;place-items:center;padding:0;position:relative}
+.tool svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tool.on{color:var(--theme-accent);border-color:var(--theme-accent)}
+.tool.on:after{content:"";position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--theme-accent);box-shadow:0 0 8px var(--theme-glow)}
+#session .practice-top{grid-template-columns:1fr auto 1fr}
+.pt-side{display:flex;gap:10px;align-items:center}.pt-side.r{justify-content:flex-end}
+.pt-side .practice-settings{margin-left:0}
+.practice-tool{width:42px;height:42px;padding:0;display:grid;place-items:center}
+.practice-tool svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.practice-tool.on{color:var(--theme-accent);border-color:var(--theme-accent)}
+.motive{opacity:0;transition:opacity .5s ease}.motive.show{opacity:.95}
+#weeklyBtn{margin-bottom:10px}
+/* ---- break screen ---- */
+.brk{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:max(18px,env(safe-area-inset-top)) 18px max(18px,env(safe-area-inset-bottom));background:radial-gradient(60% 50% at 30% 20%,var(--theme-bg1),transparent 70%),radial-gradient(50% 50% at 80% 80%,var(--theme-bg2),transparent 70%),#08090d;overflow:auto}
+.brk.open{display:flex}
+.brk-in{width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+.brk h2{font-family:var(--serif);font-weight:500;font-size:clamp(30px,6vw,42px);margin:0;letter-spacing:-.01em}
+.brk p{margin:0;color:var(--muted);font-size:15px;line-height:1.45;max-width:34ch}
+.brk-ring{position:relative;width:min(58vw,34dvh,230px);aspect-ratio:1;margin:6px 0}
+.brk-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.brk-ring circle{fill:none;stroke-width:9}.brk-ring .bg{stroke:rgba(255,255,255,.08)}
+.brk-ring .fg{stroke:var(--theme-accent);stroke-linecap:round;stroke-dasharray:552.92;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear}
+.brk-time{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);font-size:clamp(40px,9vw,56px);font-variant-numeric:tabular-nums}
+.brk-lbl{position:absolute;left:0;right:0;bottom:24%;text-align:center;font-size:10px;letter-spacing:.2em;color:var(--muted)}
+.brk-tips{list-style:none;margin:0;padding:0;display:grid;gap:6px;color:#cdd1de;font-size:14px}
+.brk-next{width:100%;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-size:14px;text-align:left}
+.brk-next b{display:block;font-size:11px;letter-spacing:.14em;color:var(--theme-accent);margin-bottom:3px}
+.brk .primary{width:100%;max-width:340px;margin-top:4px}
+.brk-sec{display:flex;gap:10px;width:100%;max-width:340px}.brk-sec .secondary{flex:1;padding:11px 8px;font-size:12px;letter-spacing:.08em}
+/* ---- shared sheet bits ---- */
+.mt-chips{display:flex;flex-wrap:wrap;gap:8px}
+.mt-chip{border:1px solid rgba(255,255,255,.07);background:var(--panel);color:var(--muted);border-radius:12px;padding:9px 13px;font-size:13px;cursor:pointer;min-width:44px}
+.mt-chip.active{background:linear-gradient(135deg,var(--theme-accent),var(--theme-accent2));color:#fff;border-color:transparent}
+.mt-lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px;font-weight:700}
+/* ---- metronome ---- */
+.mt-top{display:grid;grid-template-columns:minmax(120px,170px) 1fr;gap:14px;align-items:center}
+.mt-swing{width:100%;max-height:230px}
+.mt-swing .body{fill:var(--panel2);stroke:rgba(255,255,255,.1);stroke-width:2}
+.mt-swing .rod{stroke:#cfd3df;stroke-width:3.5;stroke-linecap:round}
+.mt-swing .wt{fill:var(--theme-accent)}
+.mt-swing .piv{fill:#0e1015;stroke:#cfd3df;stroke-width:2}
+.mt-bpm{text-align:center}
+.mt-bpm .n{font-family:var(--serif);font-size:clamp(56px,14vw,84px);line-height:1;font-variant-numeric:tabular-nums}
+.mt-bpm .u{font-size:11px;letter-spacing:.18em;color:var(--muted)}
+.mt-bpm .nm{font-family:var(--serif);font-style:italic;color:var(--theme-accent);font-size:17px;margin-top:4px}
+.mt-dots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.mt-dot{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.18);background:transparent;padding:0;cursor:pointer;transition:transform .08s}
+.mt-dot.l1{background:rgba(255,255,255,.2)}.mt-dot.l2{background:rgba(255,255,255,.55)}.mt-dot.l3{background:var(--theme-accent);border-color:var(--theme-accent)}.mt-dot.l0{opacity:.35}
+.mt-dot.act{transform:scale(1.28);box-shadow:0 0 14px var(--theme-glow)}
+.mt-tempo{display:grid;grid-template-columns:auto auto 1fr auto auto;gap:8px;align-items:center;margin-top:16px}
+.mt-tempo button{width:44px;height:44px;padding:0;border-radius:13px;font-size:16px}
+.mt-tempo input{width:100%;accent-color:var(--theme-accent)}
+.mt-go{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:14px}
+.mt-go button{padding:15px;border-radius:15px;font-weight:800;letter-spacing:.06em}
+.mt-step{display:inline-flex;align-items:center;gap:8px}.mt-step button{width:34px;height:34px;padding:0;border-radius:10px}.mt-step span{min-width:28px;text-align:center;font-variant-numeric:tabular-nums}
+.mt-train{display:grid;gap:10px;font-size:14px;color:#cdd1de}.mt-train .r{display:flex;justify-content:space-between;align-items:center;gap:10px}
+@media(max-width:520px){.mt-top{grid-template-columns:1fr}.mt-swing{max-height:170px}}
+/* ---- notes ---- */
+.nt-bar{display:flex;gap:10px;margin-bottom:12px}
+.nt-bar input{flex:1;min-width:0}
+.nt-in{width:100%;box-sizing:border-box;background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:13px;color:var(--text);padding:12px 14px;font:inherit;font-size:15px}
+.nt-in:focus{outline:none;border-color:var(--theme-accent)}
+textarea.nt-in{min-height:42dvh;resize:vertical;line-height:1.5}
+.nt-card{display:block;width:100%;text-align:left;background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:15px;padding:13px 15px;margin-bottom:9px;color:var(--text);cursor:pointer}
+.nt-card b{font-family:var(--serif);font-size:17px;font-weight:600;display:block}
+.nt-card .s{color:var(--muted);font-size:13px;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.nt-card .m{display:flex;gap:8px;margin-top:8px;font-size:11px;color:var(--muted);letter-spacing:.04em}
+.nt-tag{color:var(--theme-accent);font-weight:700}
+.nt-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0}
+.nt-empty{color:var(--muted);text-align:center;padding:28px 10px;font-size:14px;line-height:1.5}
+/* ---- weekly report ---- */
+.rp-tabs{display:flex;gap:8px;margin-bottom:14px}
+.rp-hero{display:flex;gap:16px;align-items:center;margin-bottom:14px}
+.rp-ring{position:relative;width:104px;height:104px;flex:none}
+.rp-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.rp-ring circle{fill:none;stroke-width:9}.rp-ring .bg{stroke:rgba(255,255,255,.08)}.rp-ring .fg{stroke:var(--theme-accent);stroke-linecap:round}
+.rp-ring .pc{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);font-size:26px}
+.rp-hero h3{font-family:var(--serif);font-weight:500;font-size:26px;margin:0}
+.rp-hero p{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
+.rp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.rp-stat{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:15px;padding:12px 8px;text-align:center}
+.rp-stat b{display:block;font-family:var(--serif);font-size:22px;font-weight:600}.rp-stat span{font-size:10px;letter-spacing:.12em;color:var(--muted)}
+.rp-day{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.rp-day:last-child{border-bottom:0}
+.rp-day b{font-size:13px;letter-spacing:.06em}
+.rp-keys{display:flex;gap:3px;align-items:stretch;height:24px}
+.rp-keys i{flex:1;border-radius:0 0 4px 4px;background:rgba(255,255,255,.1)}.rp-keys i.on{background:linear-gradient(180deg,var(--theme-accent),var(--theme-accent2))}.rp-keys i.gap{flex:0 0 7px;background:transparent}
+.rp-day small{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rp-miss{grid-column:2/4;color:var(--muted);font-size:11.5px;margin-top:-4px}
+.rp-box{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:14px 16px;margin-top:12px;font-size:14px;line-height:1.5;color:#d5d8e3}
+.rp-box b{display:block;font-size:11px;letter-spacing:.14em;color:var(--theme-accent);margin-bottom:6px}
+.rp-box ul{margin:0;padding-left:18px}.rp-box li{margin:3px 0}
+.rp-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.rp-two{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <main class="app" id="app">
 <div class="top">
 <div><div class="eyebrow">PIANO GRIND</div><div class="date" id="date"></div></div>
-<button aria-label="Settings" class="gear" id="settings">⚙︎</button>
+<div class="tools" id="dashTools"><button aria-label="Metronome" class="gear tool" id="metroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 21h7l-2-15h-3z"/><path d="M12 16l4-8"/><circle cx="16.3" cy="7.2" r="1"/></svg></button><button aria-label="Notes" class="gear tool" id="notesBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/></svg></button><button aria-label="Settings" class="gear" id="settings">⚙︎</button></div>
 </div>
 <h1 id="greeting">Hello Saptak.</h1>
 <div class="sub">Welcome to a virtuoso's routine.</div>
@@ -255,12 +353,13 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,6vw,54px);lette
 </div>
 <div class="day-status" id="dayStatus"><span class="status-dot"></span><div id="dayStatusText"></div></div>
 <button class="primary" id="start">START TODAY'S ROUTINE</button>
+<button class="secondary" id="weeklyBtn" style="display:none">📊  WEEKLY REPORT</button>
 <button class="secondary" id="redoDay" style="display:none">REDO A DAY</button>
 <section class="practice-mode" id="session" style="display:none">
 <div class="practice-top">
-<button aria-label="Back to dashboard" class="exit-practice practice-back" id="exitPractice"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M12 5.5L5.5 12 12 18.5"/></svg></button>
+<div class="pt-side"><button aria-label="Back to dashboard" class="exit-practice practice-back" id="exitPractice"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M12 5.5L5.5 12 12 18.5"/></svg></button><button aria-label="Notes" class="exit-practice practice-tool" id="notesBtn2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/></svg></button></div>
 <div class="practice-count" id="count"></div>
-<button aria-label="Practice settings" class="exit-practice practice-settings" id="practiceSettings">⚙︎</button>
+<div class="pt-side r"><button aria-label="Metronome" class="exit-practice practice-tool" id="metroBtn2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 21h7l-2-15h-3z"/><path d="M12 16l4-8"/><circle cx="16.3" cy="7.2" r="1"/></svg></button><button aria-label="Practice settings" class="exit-practice practice-settings" id="practiceSettings">⚙︎</button></div>
 </div>
 <div class="practice-title">
 <div class="eyebrow" id="dayLabel"></div>
@@ -287,6 +386,14 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,6vw,54px);lette
 <div class="grid" id="previewGrid"></div>
 </section>
 </main>
+<div class="brk" id="brk" role="dialog" aria-modal="true" aria-label="Break" style="display:none"><div class="brk-in">
+<div class="eyebrow" id="brkEye">CORE COMPLETE</div><h2 id="brkTitle">Take a break.</h2><p id="brkSub"></p>
+<div class="brk-ring"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="bg" cx="100" cy="100" r="88"/><circle class="fg" id="brkArc" cx="100" cy="100" r="88"/></svg><div class="brk-time" id="brkTime">05:00</div><div class="brk-lbl" id="brkLbl">BREAK</div></div>
+<ul class="brk-tips"><li>🙌 Shake out your hands and wrists</li><li>💧 Water, and stretch your shoulders and neck</li><li>👀 Look away from the score</li></ul>
+<div class="brk-next" id="brkNext"></div>
+<button class="primary" id="brkReady">I'M READY</button>
+<div class="brk-sec"><button class="secondary" id="brkMore">+2 MIN</button><button class="secondary" id="brkSkip">SKIP BREAK</button></div>
+</div></div>
 <div class="modal" id="modal"><div class="sheet">
 <button class="close" id="close">Close</button><h2 id="modalTitle">Settings</h2><div id="modalBody"></div>
 </div></div>
@@ -299,9 +406,9 @@ Monday:[
 ["Sight-Reading","20","New material","No stopping. Keep moving through new material."],
 ["Independence","10","Dohnányi — Essential Finger Exercises for Obtaining a Sure Piano Technique","Develop finger independence and coordination."],
 ["Strength","10","Hanon — The Virtuoso Pianist · Part I · 140–150 BPM","Build strength, control and evenness."],
-["Scales","20","Set A — C, C♯, D, D♯, E, F","Legato and staccato, p → f, hands together and contrary motion."],
-["Arpeggios","20","Set A — C, C♯, D, D♯, E, F","Triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
-["Octaves","20","Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales, alternating hands and octave arpeggios."],
+["Scales","20","Set A — C, C♯, D, D♯, E, F","Major and minor, hands together, a third apart and in contrary motion. Legato and staccato, p → f."],
+["Arpeggios","20","Set A — C, C♯, D, D♯, E, F","Major and minor: triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
+["Octaves","20","Set A — C, C♯, D, D♯, E, F · Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales and arpeggios in the set, then the studies. Alternating hands, legato and staccato, p → f."],
 ["Special Exercises","25","Brahms — 51 Exercises for Piano · Czerny — 40 Daily Exercises, Op. 337 · Your choice","Work on whatever Brahms or Czerny material you are currently learning."],
 ["Chromatic Work","15","Liszt S.146 — Book IV: 54, 55 · Book VI: 63 · Book VII: 67, 70 · Book VIII: 72 · Hanon — The Virtuoso Pianist · Part III: 50","Chromatic patterns in varied technical forms and techniques."],
 ["Repeated Notes","15","Liszt S.146 — Book II: 41, 46 · Hanon — The Virtuoso Pianist · Part III: 44, 45, 47","All patterns, combinations and rhythmic variations."],
@@ -312,9 +419,9 @@ Tuesday:[
 ["Sight-Reading","20","New material","No stopping. Keep moving through new material."],
 ["Independence","10","Dohnányi — Essential Finger Exercises for Obtaining a Sure Piano Technique","Develop finger independence and coordination."],
 ["Strength","10","Hanon — The Virtuoso Pianist · Part I · 140–150 BPM","Build strength, control and evenness."],
-["Scales","20","Set B — F♯, G, G♯, A, B♭, B","Legato and staccato, p → f, hands together and contrary motion."],
-["Arpeggios","20","Set B — F♯, G, G♯, A, B♭, B","Triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
-["Octaves","20","Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales, alternating hands and octave arpeggios."],
+["Scales","20","Set B — F♯, G, G♯, A, B♭, B","Major and minor, hands together, a third apart and in contrary motion. Legato and staccato, p → f."],
+["Arpeggios","20","Set B — F♯, G, G♯, A, B♭, B","Major and minor: triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
+["Octaves","20","Set B — F♯, G, G♯, A, B♭, B · Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales and arpeggios in the set, then the studies. Alternating hands, legato and staccato, p → f."],
 ["Special Exercises","25","Brahms — 51 Exercises for Piano · Czerny — 40 Daily Exercises, Op. 337 · Your choice","Work on whatever Brahms or Czerny material you are currently learning."],
 ["Broken Chords","15","Liszt S.146 — Book X: 78, 79, 80, 81","Broken-chord and arpeggio patterns, combinations and agility."],
 ["Thirds","15","Liszt S.146 — Book VI: 63, 66 · Book XI: 82 · Hanon — The Virtuoso Pianist · Part III: 52, 54","Double thirds, alternating-hand thirds and broken double thirds."],
@@ -325,9 +432,9 @@ Wednesday:[
 ["Sight-Reading","20","New material","No stopping. Keep moving through new material."],
 ["Independence","10","Dohnányi — Essential Finger Exercises for Obtaining a Sure Piano Technique","Develop finger independence and coordination."],
 ["Strength","10","Hanon — The Virtuoso Pianist · Part I · 140–150 BPM","Build strength, control and evenness."],
-["Scales","20","Set A — C, C♯, D, D♯, E, F","Legato and staccato, p → f, hands together and contrary motion."],
-["Arpeggios","20","Set A — C, C♯, D, D♯, E, F","Triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
-["Octaves","20","Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales, alternating hands and octave arpeggios."],
+["Scales","20","Set A — C, C♯, D, D♯, E, F","Major and minor, hands together, a third apart and in contrary motion. Legato and staccato, p → f."],
+["Arpeggios","20","Set A — C, C♯, D, D♯, E, F","Major and minor: triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
+["Octaves","20","Set A — C, C♯, D, D♯, E, F · Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales and arpeggios in the set, then the studies. Alternating hands, legato and staccato, p → f."],
 ["Special Exercises","25","Brahms — 51 Exercises for Piano · Czerny — 40 Daily Exercises, Op. 337 · Your choice","Work on whatever Brahms or Czerny material you are currently learning."],
 ["Chromatic Work","15","Liszt S.146 — Book IV: 54, 55 · Book VI: 63 · Book VII: 67, 70 · Book VIII: 72 · Hanon — The Virtuoso Pianist · Part III: 50","Chromatic patterns in varied technical forms and techniques."],
 ["Repeated Notes","15","Liszt S.146 — Book II: 41, 46 · Hanon — The Virtuoso Pianist · Part III: 44, 45, 47","All patterns, combinations and rhythmic variations."],
@@ -338,9 +445,9 @@ Thursday:[
 ["Sight-Reading","20","New material","No stopping. Keep moving through new material."],
 ["Independence","10","Dohnányi — Essential Finger Exercises for Obtaining a Sure Piano Technique","Develop finger independence and coordination."],
 ["Strength","10","Hanon — The Virtuoso Pianist · Part I · 140–150 BPM","Build strength, control and evenness."],
-["Scales","20","Set B — F♯, G, G♯, A, B♭, B","Legato and staccato, p → f, hands together and contrary motion."],
-["Arpeggios","20","Set B — F♯, G, G♯, A, B♭, B","Triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
-["Octaves","20","Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales, alternating hands and octave arpeggios."],
+["Scales","20","Set B — F♯, G, G♯, A, B♭, B","Major and minor, hands together, a third apart and in contrary motion. Legato and staccato, p → f."],
+["Arpeggios","20","Set B — F♯, G, G♯, A, B♭, B","Major and minor: triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
+["Octaves","20","Set B — F♯, G, G♯, A, B♭, B · Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales and arpeggios in the set, then the studies. Alternating hands, legato and staccato, p → f."],
 ["Special Exercises","25","Brahms — 51 Exercises for Piano · Czerny — 40 Daily Exercises, Op. 337 · Your choice","Work on whatever Brahms or Czerny material you are currently learning."],
 ["Broken Chords","15","Liszt S.146 — Book X: 78, 79, 80, 81","Broken-chord and arpeggio patterns, combinations and agility."],
 ["Broken Octaves","15","Liszt S.146 — Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 56, 57","Broken-octave scales and octave arpeggio coordination."],
@@ -351,9 +458,9 @@ Friday:[
 ["Sight-Reading","20","New material","No stopping. Keep moving through new material."],
 ["Independence","10","Dohnányi — Essential Finger Exercises for Obtaining a Sure Piano Technique","Develop finger independence and coordination."],
 ["Strength","10","Hanon — The Virtuoso Pianist · Part I · 140–150 BPM","Build strength, control and evenness."],
-["Scales","20","Set A — C, C♯, D, D♯, E, F","Legato and staccato, p → f, hands together and contrary motion."],
-["Arpeggios","20","Set A — C, C♯, D, D♯, E, F","Triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
-["Octaves","20","Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales, alternating hands and octave arpeggios."],
+["Scales","20","Set A — C, C♯, D, D♯, E, F","Major and minor, hands together, a third apart and in contrary motion. Legato and staccato, p → f."],
+["Arpeggios","20","Set A — C, C♯, D, D♯, E, F","Major and minor: triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
+["Octaves","20","Set A — C, C♯, D, D♯, E, F · Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales and arpeggios in the set, then the studies. Alternating hands, legato and staccato, p → f."],
 ["Special Exercises","25","Brahms — 51 Exercises for Piano · Czerny — 40 Daily Exercises, Op. 337 · Your choice","Work on whatever Brahms or Czerny material you are currently learning."],
 ["Trills","15","Hanon — The Virtuoso Pianist · Part III: 46, 54, 55, 59","Fundamental trills and fourfold trills."],
 ["Chords","15","Liszt S.146 — Book VII: 65, 70 · Book VIII: 73 · Book XII: 85","Chord-position flexibility, octave chords, diminished sevenths and inversions."],
@@ -364,9 +471,9 @@ Saturday:[
 ["Sight-Reading","20","New material","No stopping. Keep moving through new material."],
 ["Independence","10","Dohnányi — Essential Finger Exercises for Obtaining a Sure Piano Technique","Develop finger independence and coordination."],
 ["Strength","10","Hanon — The Virtuoso Pianist · Part I · 140–150 BPM","Build strength, control and evenness."],
-["Scales","20","Set B — F♯, G, G♯, A, B♭, B","Legato and staccato, p → f, hands together and contrary motion."],
-["Arpeggios","20","Set B — F♯, G, G♯, A, B♭, B","Triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
-["Octaves","20","Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales, alternating hands and octave arpeggios."],
+["Scales","20","Set B — F♯, G, G♯, A, B♭, B","Major and minor, hands together, a third apart and in contrary motion. Legato and staccato, p → f."],
+["Arpeggios","20","Set B — F♯, G, G♯, A, B♭, B","Major and minor: triads with inversions, dominant 7ths, diminished 7ths. Legato and staccato, p → f, contrary motion."],
+["Octaves","20","Set B — F♯, G, G♯, A, B♭, B · Liszt S.146 — Book VII: 68, 69 · Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 51, 53, 56, 57","Octave scales and arpeggios in the set, then the studies. Alternating hands, legato and staccato, p → f."],
 ["Special Exercises","25","Brahms — 51 Exercises for Piano · Czerny — 40 Daily Exercises, Op. 337 · Your choice","Work on whatever Brahms or Czerny material you are currently learning."],
 ["Broken Octaves","15","Liszt S.146 — Book VIII: 71 · Book XII: 84 · Hanon — The Virtuoso Pianist · Part III: 56, 57","Broken-octave scales and octave arpeggio coordination."],
 ["Chords","15","Liszt S.146 — Book VII: 65, 70 · Book VIII: 73 · Book XII: 85","Chord-position flexibility, octave chords, diminished sevenths and inversions."],
@@ -546,9 +653,9 @@ async function pgWakeSync(){try{if(running&&document.visibilityState==="visible"
 function pgSync(){
   pgWakeSync();
   if(!pgSubJson||!pgOn())return;
-  const on=running&&endAt>0,b=routine[idx]||[],n=routine[idx+1],sig=on?endAt+"|"+idx:"off";
+  const brk=!!(window.pgBreak&&pgBreak.active&&pgBreak.at>Date.now()),on=(running&&endAt>0)||brk,b=routine[idx]||[],n=routine[idx+1],at=brk?pgBreak.at:endAt,sig=on?at+"|"+idx+(brk?"b":""):"off";
   if(sig===pgSig)return;pgSig=sig;
-  const msg=on?{sub:pgSubJson,at:endAt,urgency:"high",ttl:600,title:b[0]+" complete",body:n?`Next: ${n[0]} · ${n[1]} min — ready when you are.`:"That was the last block. Nice work."}:{cancel:pgSubJson.endpoint};
+  const msg=on?{sub:pgSubJson,at:at,urgency:"high",ttl:600,title:brk?"Break over":b[0]+" complete",body:brk?`${b[0]} · ${b[1]} min is next — ready when you are.`:(n?`Next: ${n[0]} · ${n[1]} min — ready when you are.`:"That was the last block. Nice work.")}:{cancel:pgSubJson.endpoint};
   fetch(PG_URL+(on?"/schedule":"/cancel"),{method:"POST",headers:{"content-type":"text/plain"},body:JSON.stringify(msg),keepalive:true}).then(r=>{if(!r.ok)throw 0;pgTry=0}).catch(()=>{pgSig="";if(pgTry++<3)setTimeout(pgSync,6000)});
 }
 let pgTry=0;window.addEventListener("online",()=>{pgSig="";pgSync()});
@@ -571,13 +678,13 @@ function tick(){
   if(!running){stopTicker();return}
   timer=setTimeout(tick,Math.max(30,(endAt-Date.now())%1000+20));
 }
-function startTicker(){clearTimeout(timer);$("session").classList.add("live");tick();quoteStart()}
-function stopTicker(){clearTimeout(timer);timer=null;$("session").classList.remove("live");quoteStop()}
+function startTicker(){clearTimeout(timer);$("session").classList.add("live");tick();quoteStart();if(typeof pgKAsync==="function")pgKAsync()}
+function stopTicker(){clearTimeout(timer);timer=null;$("session").classList.remove("live");quoteStop();if(typeof pgKAsync==="function")pgKAsync()}
 function start(){
   if(today==="Sunday"&&!isRedo)return;
   if(!isRedo&&allBlocksDone())return;
   if(!isRedo){const progress=getProgressState();if(progress.started)idx=Math.max(0,Math.min(routine.length-1,Number(progress.resumeIndex)||0));}
-  $("session").style.display="grid";$("preview").style.display="none";$("start").style.display="none";$("dayStatus").classList.remove("show","complete");$("quote").style.display="none";$("moods").style.display="none";$("greeting").style.display="none";$("settings").style.display="none";$("date").style.display="none";
+  $("session").style.display="grid";$("preview").style.display="none";$("start").style.display="none";$("dayStatus").classList.remove("show","complete");$("quote").style.display="none";$("moods").style.display="none";$("greeting").style.display="none";$("dashTools").style.display="none";$("date").style.display="none";
   load(idx);running=true;endAt=Date.now()+remaining*1000;$("pause").textContent="PAUSE";ping();saveTimerState();startTicker();
 }
 function finishCurrentBlock(fromElapsed=false){
@@ -632,7 +739,7 @@ function restoreTimerState(enterPractice=false){
       updateDashboardState();
       return true;
     }
-    $("session").style.display="grid";$("preview").style.display="none";$("start").style.display="none";$("dayStatus").classList.remove("show","complete");$("quote").style.display="none";$("moods").style.display="none";$("greeting").style.display="none";$("settings").style.display="none";$("date").style.display="none";
+    $("session").style.display="grid";$("preview").style.display="none";$("start").style.display="none";$("dayStatus").classList.remove("show","complete");$("quote").style.display="none";$("moods").style.display="none";$("greeting").style.display="none";$("dashTools").style.display="none";$("date").style.display="none";
     load(idx);
     remaining=Math.max(0,Number(st.remaining)||0);
     endAt=Number(st.endAt)||0;
@@ -677,7 +784,7 @@ async function readyAudio(){
 }
 // keep the engine unlocked on every touch so the end-of-block sound is never the first thing to hit a sleeping context
 ["pointerdown","touchend","keydown"].forEach(ev=>document.addEventListener(ev,()=>{try{const c=getCtx();if(c.state!=="running")c.resume()}catch(e){}},{passive:true}));
-function setVolume(v){volume=v;try{localStorage.setItem("pianoGrindVolume",volume)}catch(x){}if(masterGain)masterGain.gain.value=volume*1.15}
+function setVolume(v){volume=v;if(typeof pgAudioDirty==="function")pgAudioDirty();try{localStorage.setItem("pianoGrindVolume",volume)}catch(x){}if(masterGain)masterGain.gain.value=volume*1.15}
 function voice(t,f,a,dec,o={}){
   const c=audioCtx,os=c.createOscillator(),g=c.createGain();let n=g;
   os.type=o.type||"sine";os.frequency.setValueAtTime(f,t);if(o.det)os.detune.value=o.det;
@@ -709,18 +816,7 @@ const PHRASES={
 };
 // full = the whole phrase (block finished / preview). Otherwise just the opening two notes as a soft "go" cue.
 const SOUNDS=Object.fromEntries(Object.keys(PHRASES).map(k=>[k,(t,full)=>(full?PHRASES[k]:PHRASES[k].slice(0,2)).forEach(([dt,m,a,d])=>TONES[k](t+dt,mf(m),a,full?d:Math.min(d,1.4)))]));
-async function ping(full=false){try{const c=await readyAudio();(SOUNDS[sound]||SOUNDS.bell)(c.currentTime+.08,full)}catch(e){}}
 function beep(){ping(true)}
-// ---- motivational lines: one fades in for ~12 s every 30-60 s while the timer runs ----
-const MOTIVE=["Slow is smooth. Smooth becomes fast.","Every clean rep is a vote for who you become.","Evenness first. Speed is a by-product.","Drop the shoulders. Breathe.","Listen harder than you play.","Boring today, brilliant tomorrow.","Loose hands, sharp ears.","Small corrections, every single day.","Nobody can take this work away from you.","Clean first. Then fast. Never the reverse.","Your future hands are being built right now.","Stay on the hard part. That's where you grow.","Patience is a technique too.","One more perfect pass.","Show up. Play it slow. Play it right."];
-let qTimer=null,qBag=[];
-function quoteNext(){if(!qBag.length){qBag=MOTIVE.slice();for(let i=qBag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[qBag[i],qBag[j]]=[qBag[j],qBag[i]]}}return qBag.pop()}
-function quoteSchedule(ms){clearTimeout(qTimer);qTimer=setTimeout(quoteShow,ms)}
-function quoteShow(){const el=$("motive");if(!el||!running||remaining<25){quoteSchedule(20000);return}
-  el.textContent=quoteNext();el.classList.add("show");
-  qTimer=setTimeout(()=>{el.classList.remove("show");quoteSchedule(30000+Math.random()*30000)},12000)}
-function quoteStart(){if(!qTimer)quoteSchedule(5000)}
-function quoteStop(){clearTimeout(qTimer);qTimer=null;const el=$("motive");if(el)el.classList.remove("show")}
 async function requestNotificationPermission(){
   try{
     if(!('Notification' in window)) return "unsupported";
@@ -750,8 +846,8 @@ async function notifyTimerEvent(title,body,force=false){
 }
 $("exitPractice").onclick=()=>{
   if(!isRedo)saveProgressState({started:true,resumeIndex:idx});
-  stopTicker();running=false;lastClockAt=0;endAt=0;clearTimerState();isRedo=false;setTimeout(()=>{if(!running)try{audioCtx&&audioCtx.suspend()}catch(e){}},6000);activeDay=today;routine=routines[today];
-  $("session").style.display="none";$("preview").style.display="block";$("quote").style.display="block";$("moods").style.display="flex";$("greeting").style.display="block";$("settings").style.display="block";$("date").style.display="block";renderPreview();
+  stopTicker();running=false;lastClockAt=0;endAt=0;clearTimerState();isRedo=false;if(typeof pgKAsync==="function")pgKAsync();setTimeout(()=>{if(!running)try{audioCtx&&audioCtx.suspend()}catch(e){}},6000);activeDay=today;routine=routines[today];
+  $("session").style.display="none";$("preview").style.display="block";$("quote").style.display="block";$("moods").style.display="flex";$("greeting").style.display="block";$("dashTools").style.display="flex";$("date").style.display="block";renderPreview();
 };
 $("start").onclick=()=>{
   const saved=readSavedTimerState();
@@ -832,30 +928,19 @@ loadPreferences();
 function renderSettings(){
   openModal("Settings",`\
     <div class="row"><b>Full Week</b><span>Open the complete 7-day calendar.</span><button class="secondary" id="settingsWeek" style="margin-top:10px">VIEW FULL WEEK</button></div>\
+    <div class="row"><b>Weekly report</b><span>How the week went: every day, every block, what got skipped.</span><button class="secondary" id="settingsReport" style="margin-top:10px">VIEW WEEKLY REPORT</button></div>\
     <div class="row"><b>Colour theme</b><div class="theme"><button style="background:#a78bfa" data-theme="violet" aria-label="Violet"></button><button style="background:#39b6d9" data-theme="ocean" aria-label="Ocean"></button><button style="background:#ff8a4c" data-theme="ember" aria-label="Ember"></button><button style="background:#78e0b0" data-theme="mint" aria-label="Mint"></button></div></div>\
     <div class="row"><b>Timer sound</b><div class="sound"><button data-sound="bell" class="${sound==="bell"?"active":""}">🔔 Bell</button><button data-sound="chime" class="${sound==="chime"?"active":""}">✨ Chime</button><button data-sound="piano" class="${sound==="piano"?"active":""}">🎹 Piano</button><button data-sound="wood" class="${sound==="wood"?"active":""}">🪵 Wood</button><button data-sound="bowl" class="${sound==="bowl"?"active":""}">🥣 Bowl</button></div><input class="vol" id="vol" type="range" min="0" max="100" value="${Math.round(volume*100)}" aria-label="Volume"></div>\
-    <div class="row"><b>Background notifications</b><span>Tap ENABLE → Allow. Then you\'ll get a notification when a block finishes while you\'re away from Piano Grind.</span><button class="secondary" id="enableNotifications" style="margin-top:10px">ENABLE NOTIFICATIONS</button><button class="secondary" id="testNotification" style="margin-top:8px">SEND TEST NOTIFICATION</button><span id="pushStatus" style="margin-top:10px"></span></div>\
+    <div class="row"><b>Background mode</b><span>Keeps the timer, the end-of-block sound and the alert alive while you flip to ForScore. Runs only while a timer or break is running, and uses a little more battery then.</span><button class="secondary" id="bgMode" style="margin-top:10px"></button></div>\
+    <div class="row"><b>Background notifications</b><span>Tap ENABLE → Allow. Then you\'ll get a notification when a block finishes while you\'re away from Piano Grind.</span><button class="secondary" id="enableNotifications" style="margin-top:10px">ENABLE NOTIFICATIONS</button><button class="secondary" id="testNotification" style="margin-top:8px">RUN NOTIFICATION CHECK</button><span id="pushStatus" style="margin-top:10px"></span></div>\
   `);
-  $("settingsWeek").onclick=renderFullWeek;
+  $("settingsWeek").onclick=renderFullWeek;if(typeof pgBindSettings==="function")pgBindSettings();
   pgDiag().then(t=>{const e=$("pushStatus");if(e)e.textContent=t});
   document.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>{applyThemeName(b.dataset.theme,true);renderSettings();});
-  document.querySelectorAll("[data-sound]").forEach(b=>b.onclick=()=>{sound=b.dataset.sound;localStorage.setItem("pianoGrindSound",sound);document.querySelectorAll("[data-sound]").forEach(x=>x.classList.remove("active"));b.classList.add("active");ping(true)});
-  $("vol").oninput=e=>setVolume(e.target.value/100);$("vol").onchange=()=>ping(false);
+  document.querySelectorAll("[data-sound]").forEach(b=>b.onclick=()=>{sound=b.dataset.sound;localStorage.setItem("pianoGrindSound",sound);document.querySelectorAll("[data-sound]").forEach(x=>x.classList.remove("active"));b.classList.add("active");pgPrepAudio().then(()=>ping(true))});
+  $("vol").oninput=e=>setVolume(e.target.value/100);$("vol").onchange=()=>pgPrepAudio().then(()=>ping(false));
   const nb=$("enableNotifications");if(nb){const refresh=()=>{if(!('Notification' in window)){nb.textContent="NOT SUPPORTED";return;}nb.textContent=Notification.permission==='granted'?"NOTIFICATIONS ON":(Notification.permission==='denied'?"BLOCKED — CHECK BROWSER SETTINGS":"ENABLE NOTIFICATIONS");};refresh();nb.onclick=async()=>{const result=await requestNotificationPermission();if(result==="granted"){try{const reg=await navigator.serviceWorker.ready;await reg.showNotification("Piano Grind — Notifications On",{body:"You're set. Block-finish alerts are enabled.",tag:"piano-grind-setup"})}catch(e){}}else if(result==="denied"){nb.textContent="BLOCKED — ENABLE IN BROWSER SETTINGS"}else if(result==="https-required"){nb.textContent="NEEDS HTTPS"}else if(result==="unsupported"){nb.textContent="NOT SUPPORTED HERE"}refresh();};}
-  const tn=$("testNotification");if(tn){tn.onclick=async()=>{
-    tn.textContent="SENDING…";tn.disabled=true;
-    try{
-      const result=await requestNotificationPermission();
-      if(result!=="granted"){tn.textContent=result==="denied"?"BLOCKED — CHECK BROWSER SETTINGS":result==="https-required"?"NEEDS HTTPS":result==="unsupported"?"NOT SUPPORTED HERE":"ENABLE NOTIFICATIONS FIRST";setTimeout(()=>{tn.textContent="SEND TEST NOTIFICATION";tn.disabled=false},2200);return;}
-      if(!pgOn()){tn.textContent="WORKER URL NOT SET";setTimeout(()=>{tn.textContent="SEND TEST NOTIFICATION";tn.disabled=false},2200);return;}
-      if(!pgSubJson)await pgSubscribe();
-      if(!pgSubJson)throw new Error("No push subscription");
-      const res=await fetch(PG_URL+"/schedule",{method:"POST",headers:{"content-type":"text/plain"},body:JSON.stringify({sub:pgSubJson,at:Date.now()+5000,title:"Test",body:"Test notification received. Your background notifications are working."})});
-      if(!res.ok)throw new Error("Schedule failed");
-      tn.textContent="SENT — LEAVE THE APP / LOCK NOW (≈5s)";
-    }catch(e){tn.textContent="TEST FAILED — TRY AGAIN";}
-    setTimeout(()=>{tn.textContent="SEND TEST NOTIFICATION";tn.disabled=false},3000);
-  };}
+  const tn=$("testNotification");if(tn){tn.onclick=()=>pgRunTest(tn)}
 }
 
 (function setupBackgroundNotifications(){
@@ -870,6 +955,421 @@ $("settings").onclick=renderSettings;
 $("practiceSettings").onclick=renderSettings;
 function openModal(title,body){$("modal").style.zIndex="";$("modalTitle").textContent=title;$("modalBody").innerHTML=body;$("modal").classList.add("open")}
 $("close").onclick=()=>{$("modal").classList.remove("open");$("modal").style.zIndex=""};$("modal").onclick=e=>{if(e.target===$("modal")){$("modal").classList.remove("open");$("modal").style.zIndex=""}};
+</script>
+<script id="pg-v23">
+/* ===== Piano Grind v23 : part A (audio, quotes, break, notification check) ===== */
+const pgWait=ms=>new Promise(r=>setTimeout(r,ms));
+const pgLS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const pgEsc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- audio ----------
+   1. The end-of-block sound is pre-rendered to a WAV and played through an <audio> element (more reliable on iPadOS than WebAudio,
+      which iOS keeps suspending).
+   2. "Background mode": while a timer or break is running, a silent looping track keeps the page alive, so the timer, the chime and the
+      alert still fire when you flip to ForScore. It stops the moment the timer stops. */
+const PGA={el:null,url:{full:null,cue:null,silent:null},key:"",chiming:false,bg:pgLS.get("pianoGrindBg",true)!==false,unlocked:false};
+function pgWavI16(a,sr){
+  const n=a.length,b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,"RIFF");v.setUint32(4,36+n*2,true);w(8,"WAVE");w(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,"data");v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++)v.setInt16(44+i*2,a[i],true);
+  return URL.createObjectURL(new Blob([b],{type:"audio/wav"}));
+}
+function pgSilentUrl(){if(!PGA.url.silent){const sr=8000,a=new Int16Array(sr*2);for(let i=0;i<a.length;i+=2)a[i]=1;PGA.url.silent=pgWavI16(a,sr)}return PGA.url.silent}
+async function pgRender(name,full){
+  const sr=24000,p=PHRASES[name],notes=full?p:p.slice(0,2);
+  const dur=Math.max(...notes.map(n=>n[0]+(full?n[3]:Math.min(n[3],1.4))))+.5;
+  const OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext,off=new OAC(1,Math.ceil(sr*dur),sr);
+  const sc=audioCtx,sg=masterGain;
+  try{
+    audioCtx=off;const comp=off.createDynamicsCompressor();comp.threshold.value=-14;comp.knee.value=14;comp.ratio.value=4;comp.attack.value=.003;comp.release.value=.25;
+    masterGain=off.createGain();masterGain.gain.value=Math.max(.05,volume)*1.15;masterGain.connect(comp);comp.connect(off.destination);
+    SOUNDS[name](.02,full);
+  }finally{audioCtx=sc;masterGain=sg}
+  const buf=await off.startRendering(),f=buf.getChannelData(0),o=new Int16Array(f.length);
+  for(let i=0;i<f.length;i++){const x=Math.max(-1,Math.min(1,f[i]));o[i]=x<0?x*32768:x*32767}
+  return pgWavI16(o,sr);
+}
+let pgPrepTok=0;
+async function pgPrepAudio(){
+  const tok=++pgPrepTok,key=sound+"|"+Math.round(volume*100);if(PGA.key===key)return;
+  try{const f=await pgRender(sound,true),c=await pgRender(sound,false);if(tok!==pgPrepTok)return;
+    ["full","cue"].forEach(k=>{if(PGA.url[k])try{URL.revokeObjectURL(PGA.url[k])}catch(e){}});PGA.url.full=f;PGA.url.cue=c;PGA.key=key}catch(e){}
+}
+function pgAudioDirty(){clearTimeout(pgAudioDirty.t);pgAudioDirty.t=setTimeout(pgPrepAudio,300)}
+function pgEl(){if(!PGA.el){const a=new Audio();a.setAttribute("playsinline","");a.preload="auto";a.loop=true;a.src=pgSilentUrl();a.dataset.mode="ka";PGA.el=a}return PGA.el}
+function pgKeepWanted(){const b=window.pgBreak;return PGA.bg&&(running||!!(b&&b.active&&Date.now()<b.at+4000))}
+function pgMedia(on){
+  if(!("mediaSession" in navigator))return;
+  try{
+    if(on){const b=routine[idx]||[];navigator.mediaSession.metadata=new MediaMetadata({title:b[0]||"Practice",artist:"Piano Grind",album:activeDay,artwork:[{src:"icons/icon-512.png",sizes:"512x512",type:"image/png"}]});navigator.mediaSession.playbackState="playing";
+      navigator.mediaSession.setActionHandler("play",()=>{if(!(window.pgBreak&&pgBreak.active)&&!running)$("pause").click()});
+      navigator.mediaSession.setActionHandler("pause",()=>{if(!(window.pgBreak&&pgBreak.active)&&running)$("pause").click()})}
+    else navigator.mediaSession.playbackState="none";
+  }catch(e){}
+}
+function pgKAsync(){
+  if(PGA.chiming)return;
+  const a=pgEl();
+  if(pgKeepWanted()){if(a.dataset.mode!=="ka"){a.loop=true;a.src=pgSilentUrl();a.dataset.mode="ka"}const p=a.play();if(p&&p.catch)p.catch(()=>{});pgMedia(true)}
+  else{a.pause();pgMedia(false)}
+}
+async function ping(full=false){
+  const u=PGA.url[full?"full":"cue"];
+  if(u){
+    try{
+      const a=pgEl();PGA.chiming=true;a.loop=false;a.dataset.mode="chime";a.src=u;a.currentTime=0;
+      a.onended=()=>{a.onended=null;PGA.chiming=false;pgKAsync()};
+      setTimeout(()=>{if(PGA.chiming&&a.dataset.mode==="chime"&&a.paused){PGA.chiming=false;pgKAsync()}},8000);
+      await a.play();return;
+    }catch(e){PGA.chiming=false}
+  }
+  try{const c=await readyAudio();(SOUNDS[sound]||SOUNDS.bell)(c.currentTime+.08,full)}catch(e){}
+}
+["click","touchend"].forEach(ev=>document.addEventListener(ev,()=>{
+  if(PGA.unlocked)return;PGA.unlocked=true;pgPrepAudio();
+  if(pgKeepWanted())return;
+  const a=pgEl();a.muted=true;const p=a.play();if(p&&p.then)p.then(()=>{if(!pgKeepWanted()&&!PGA.chiming)a.pause();a.muted=false}).catch(()=>{a.muted=false})
+},{capture:true,passive:true}));
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")pgKAsync()});
+pgPrepAudio();
+
+/* ---------- on-screen lines: always one visible, a new one every ~20 s ---------- */
+const Q_GEN=["Slow is smooth. Smooth becomes fast.","Every clean rep is a vote for who you become.","Evenness first. Speed is a by-product.","Drop the shoulders. Breathe.","Listen harder than you play.","Boring today, brilliant tomorrow.","Loose hands, sharp ears.","Small corrections, every single day.","Nobody can take this work away from you.","Clean first. Then fast. Never the reverse.","Your future hands are being built right now.","Stay on the hard part. That's where you grow.","Patience is a technique too.","One more perfect pass.","Show up. Play it slow. Play it right.","Tension is the enemy of speed.","Let the weight of the arm do the work.","Play it like you mean it, even at p.","Sound first, fingers second.","A relaxed hand is a fast hand.","Quality reps beat quantity reps.","Fix the one wrong note, not the whole bar.","Hear it before you play it.","The metronome is a friend, not a judge.","You're not behind. You're building.","Discipline in the room, freedom at the piano.","Make the easy parts beautiful.","Think of the phrase, not the finger.","Practise until you can't get it wrong.","The piano rewards those who show up.","Be a little better than ten minutes ago.","Stay curious about your mistakes.","Same exercise, deeper attention.","Breathe with the phrase.","Feel the key bed. Don't slam into it.","If it hurts, stop. If it's hard, stay.","Make every minute count.","You chose this. Enjoy it.","Every great pianist was once exactly where you are.","Consistency is the whole secret.","Today's work is tomorrow's ease.","Quiet hands, loud music.","Mind the pulse.","Aim for tone, not just notes.","Finish the day proud, not just finished.","Technique is how you say what you mean."];
+const Q_TIPS={"Warm-up":["Start slow. Wake the hands up gently.","Posture check: feet flat, shoulders down.","No tension. Let each finger fall with its own weight."],"Sight-Reading":["Eyes ahead. Keep going, no stopping.","Key signature first, then rhythm.","Wrong notes are fine. Stopping is not."],"Independence":["One finger moves; the rest stay quiet.","Held fingers relaxed, not clamped.","Slow enough that no neighbour twitches."],"Strength":["Firm fingertips, soft wrists.","Strength comes from control, not force.","Even tone on every finger."],"Scales":["Thumb under early and smooth.","Same sound from the first note to the last.","Shape the line: swell going up, ease coming down.","Quiet hand. Let the thumb tuck."],"Arpeggios":["Wrist leads, fingers follow the curve.","Keep the hand rolling, no jumps between notes.","Inversions: know the shape before you play it."],"Octaves":["Play from the wrist, not the fingers.","Stay loose. Octaves punish tight hands.","Bounce off the keys. Don't press."],"Special Exercises":["Go after the weak spot. That's why it's here.","Slow, even, then add speed."],"Chromatic Work":["Same fingering shape every time.","Light and even. Let the hand glide."],"Repeated Notes":["Let the key come fully back up.","Change fingers smoothly, keep the sound even."],"Sixths":["Move the hand as one unit.","Connect the top line, listen to it."],"Thirds":["Stable hand shape, level wrist.","Stay legato. Hear the top voice."],"Trills":["Stay close to the keys.","Rotate the forearm. Don't push with the fingers."],"Broken Chords":["Hand shape changes, wrist flows.","Think the whole chord shape, not single notes."],"Broken Octaves":["Rotate the forearm, don't jump.","Stay close to the keys, aim ahead."],"Chords":["Prepare the shape before you play.","Arm weight, not a hit from the fingers."],"Tremolo":["Rotate the forearm, keep the wrist loose.","Even speed first. Shape later."]};
+let qT=null,qBagG=[],qBagT=[],qAlt=0,qLast="";
+function qBag(src){const a=src.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function qPick(){
+  const name=(routine[idx]||[])[0],tips=Q_TIPS[name]||[];let out="";
+  for(let n=0;n<4&&(!out||out===qLast);n++){
+    if(tips.length&&qAlt%2===0){if(!qBagT.length)qBagT=qBag(tips);out=qBagT.pop()}
+    else{if(!qBagG.length)qBagG=qBag(Q_GEN);out=qBagG.pop()}
+    if(out===qLast)qAlt++;
+  }
+  qAlt++;qLast=out;return out;
+}
+function qSet(text,instant){const el=$("motive");if(!el)return;el.classList.remove("show");clearTimeout(qSet.t);
+  if(instant){el.textContent=text;void el.offsetWidth;el.classList.add("show");return}
+  qSet.t=setTimeout(()=>{el.textContent=text;el.classList.add("show")},520)}
+function quoteLoad(){qBagT=[];qAlt=0;qSet(qPick(),true)}
+function quoteStart(){clearInterval(qT);qSet(qPick());qT=setInterval(()=>{if(running)qSet(qPick())},20000)}
+function quoteStop(){clearInterval(qT);qT=null}
+
+/* ---------- Core -> Spotlight break ---------- */
+const BRK_KEY="pianoGrindBreak";
+window.pgBreak={active:false,at:0,start:0,dur:300,done:false};
+let brkTick=null;
+const brkSeen=()=>pgLS.get(BRK_KEY,{});
+function coreFollowed(){return getCompleted().filter(i=>i<SPOT).length>=5}
+function shouldBreak(){return activeDay!=="Sunday"&&routine.length>SPOT&&!brkSeen()[completionDateKey()+"|"+completionScope()]&&coreFollowed()}
+function brkSave(extra){const s=brkSeen();s[completionDateKey()+"|"+completionScope()]=Object.assign({at:pgBreak.at,start:pgBreak.start,dur:pgBreak.dur,ended:!pgBreak.active,day:activeDay,redo:isRedo},extra||{});
+  const keep={},k=Object.keys(s).sort().slice(-6);k.forEach(x=>keep[x]=s[x]);pgLS.set(BRK_KEY,keep)}
+function brkPaint(){
+  const left=Math.max(0,Math.ceil((pgBreak.at-Date.now())/1000)),over=left<=0,circ=552.92;
+  $("brkTime").textContent=fmt(left);
+  $("brkArc").style.strokeDashoffset=String(circ*(1-Math.max(0,Math.min(1,left/pgBreak.dur))));
+  $("brkEye").textContent=over?"BREAK OVER":"CORE COMPLETE";
+  $("brkTitle").textContent=over?"Ready when you are.":"Take a break.";
+  $("brkSub").textContent=over?"Hands warm and loose? Spotlight is next.":"You just finished "+routine.slice(0,SPOT).reduce((a,b)=>a+Number(b[1]),0)+" minutes of Core. Hands off the keys for a bit.";
+  $("brkLbl").textContent=over?"DONE":"BREAK";
+  if(over&&!pgBreak.done){pgBreak.done=true;ping(true);pgKAsync();if(navigator.vibrate)try{navigator.vibrate([200,100,200])}catch(e){}}
+}
+function brkOpen(){
+  const n=routine[SPOT];$("brkNext").innerHTML=n?`<b>UP NEXT · SPOTLIGHT</b>${pgEsc(n[0])} · ${n[1]} min`:"";
+  $("brk").classList.add("open");$("brk").style.display="flex";clearInterval(brkTick);brkPaint();brkTick=setInterval(brkPaint,1000);
+}
+function startBreak(mins=5){
+  pgBreak.active=true;pgBreak.done=false;pgBreak.start=Date.now();pgBreak.dur=mins*60;pgBreak.at=Date.now()+mins*60000;
+  brkSave();brkOpen();pgSync();pgKAsync();
+}
+function endBreak(go){
+  pgBreak.active=false;clearInterval(brkTick);$("brk").classList.remove("open");$("brk").style.display="none";brkSave({ended:true});pgSync();pgKAsync();
+  if(!go)return;
+  if($("session").style.display==="grid"){if(!running)$("pause").click()}else{$("start").click();setTimeout(()=>{if($("session").style.display==="grid"&&!running)$("pause").click()},300)}
+}
+$("brkReady").onclick=()=>endBreak(true);
+$("brkSkip").onclick=()=>endBreak(true);
+$("brkMore").onclick=()=>{pgBreak.at+=120000;pgBreak.dur+=120;pgBreak.done=false;brkSave();brkPaint();pgSync()};
+function restoreBreak(){
+  const s=brkSeen()[completionDateKey()+"|"+completionScope()],raw=pgLS.get(BRK_KEY,{});
+  for(const k in raw){const v=raw[k];if(k.startsWith(completionDateKey()+"|")&&v&&!v.ended&&v.at){
+    if(Date.now()>v.at+20*60000)continue; // stale: forget it
+    activeDay=v.day||today;isRedo=!!v.redo;routine=routines[activeDay]||routine;
+    Object.assign(pgBreak,{active:true,at:v.at,start:v.start,dur:v.dur,done:Date.now()>=v.at});
+    brkOpen();pgKAsync();return true}}
+  return false;
+}
+/* wrap the original timer functions (declared in the main script) */
+const _finish=finishCurrentBlock;
+finishCurrentBlock=function(fe){const was=idx;_finish(fe);if(fe&&was===SPOT-1&&idx===SPOT&&shouldBreak())startBreak(5)};
+const _nx=$("next").onclick;
+$("next").onclick=()=>{const was=idx;_nx();if(was===SPOT-1&&idx===SPOT&&shouldBreak())startBreak(5)};
+const _load=load;
+load=function(i){_load(i);quoteLoad();
+  if(idx===SPOT-1&&activeDay!=="Sunday"){const n=routine[SPOT];$("upNext").innerHTML=`<b>Up Next</b><br>Break, then Spotlight <span style="color:var(--muted)">· ${n[0]} · ${n[1]} min</span>`}
+  if(pgKeepWanted())pgMedia(true)};
+const _uds=updateDashboardState;
+updateDashboardState=function(){
+  _uds();
+  const wb=$("weeklyBtn");if(wb)wb.style.display=today==="Sunday"?"block":"none";
+  if(today==="Sunday"||isRedo)return;
+  const done=getCompleted(),core=done.filter(i=>i<SPOT).length,spot=done.length-core;
+  if(core===SPOT&&done.length<routine.length){
+    $("dayStatus").classList.add("show");$("dayStatus").classList.remove("complete");
+    $("dayStatusText").innerHTML=spot===0?`<b>Core complete. 🎹</b> Take a breather, then get ready for Spotlight — ${pgEsc(routine[SPOT][0])} is next.`:`<b>Spotlight in progress.</b> ${routine.length-done.length} block${routine.length-done.length===1?"":"s"} to go.`;
+    if(spot===0)$("start").textContent="START SPOTLIGHT";
+  }
+};
+const _sv=saveCompleted;
+saveCompleted=function(arr){_sv(arr);
+  try{const L=pgLS.get("pianoGrindLog",{}),d=completionDateKey(),r=routines[activeDay]||[];L[d]=L[d]||{};
+    L[d][completionScope()]={names:arr.map(i=>r[i]&&r[i][0]).filter(Boolean),mins:arr.reduce((a,i)=>a+(r[i]?Number(r[i][1]):0),0),total:r.length};
+    const keys=Object.keys(L).sort().slice(-60),o={};keys.forEach(k=>o[k]=L[k]);pgLS.set("pianoGrindLog",o)}catch(e){}};
+/* block-end alert from inside the page: when the page is alive in the background but the server push is late, show one ourselves */
+const pgPushWaiters=[];
+if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="pg-push"){while(pgPushWaiters.length)pgPushWaiters.pop()(true)}});
+notifyTimerEvent=async function(title,body,force=false){
+  if(document.visibilityState==="visible")return;
+  try{
+    if(!("Notification" in window)||Notification.permission!=="granted")return;
+    if(pgSubJson){const got=await Promise.race([new Promise(r=>pgPushWaiters.push(r)),pgWait(12000).then(()=>false)]);if(got)return}
+    const reg=navigator.serviceWorker?await navigator.serviceWorker.getRegistration():null;
+    if(reg&&reg.showNotification)await reg.showNotification("Piano Grind — "+title,{body,tag:"pg-local-"+Date.now(),renotify:true,icon:"./icons/icon-192.png",badge:"./icons/icon-192.png"});
+  }catch(e){}
+};
+
+/* ---------- notification check (end-to-end) ---------- */
+async function pgRunTest(btn){
+  const out=$("pushStatus"),log=[];let live="";
+  const paint=()=>{if(out)out.innerHTML=log.concat(live?[live]:[]).map(x=>`<div style="margin-top:4px">${x}</div>`).join("")};
+  const ok=t=>{log.push("✓ "+t);paint()},bad=t=>{log.push("✗ "+t);paint();btn.disabled=false;btn.textContent="RUN CHECK AGAIN"};
+  btn.disabled=true;btn.textContent="CHECKING…";
+  const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),sa=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+  if(ios&&!sa)return bad("Not opened from the Home Screen. Delete the icon, re-add it from Safari (Share → Add to Home Screen) and open it from there.");
+  ok("Running as an installed app");
+  const perm=await requestNotificationPermission();
+  if(perm!=="granted")return bad("Permission is "+perm+". On the iPad: Settings → Notifications → Piano Grind → Allow Notifications.");
+  ok("Notification permission granted");
+  try{await navigator.serviceWorker.ready;ok("Service worker active")}catch(e){return bad("Service worker not running.")}
+  if(!pgOn())return bad("Worker URL not set in the file.");
+  try{if(!pgSubJson)await pgSubscribe();if(!pgSubJson)throw 0;ok("Push subscription created")}catch(e){return bad("Couldn't subscribe to push (server key or Apple's push service refused it).")}
+  try{const r=await fetch(PG_URL+"/vapid");if(!r.ok)throw 0;ok("Push server reachable")}catch(e){return bad("Can't reach the Cloudflare worker.")}
+  const t0=Date.now();let got=false;pgPushWaiters.push(()=>{got=true});
+  try{const r=await fetch(PG_URL+"/schedule",{method:"POST",headers:{"content-type":"text/plain"},body:JSON.stringify({sub:pgSubJson,at:Date.now()+3000,title:"Test",body:"It works. Block alerts will reach you like this."})});if(!r.ok)throw 0;ok("Server accepted the alert")}catch(e){return bad("Server refused the alert (check the KV binding named KV).")}
+  btn.textContent="WAITING FOR THE PUSH… LOCK THE SCREEN NOW";
+  for(let s=0;s<170&&!got;s++){live="… waiting "+s+"s (the server checks once a minute, so up to ~60 s is normal)";paint();await pgWait(1000)}
+  live="";
+  if(got){ok("Push arrived after "+Math.round((Date.now()-t0)/1000)+" s.");log.push("If the banner appeared but the locked screen did NOT light up, that's iPadOS: Settings → Notifications → Piano Grind → turn on Lock Screen, Banners and Sounds, and switch Focus / Do Not Disturb off.");paint();btn.disabled=false;btn.textContent="RUN CHECK AGAIN"}
+  else bad("No push arrived in under 3 minutes. The app → server step worked, so the Cloudflare worker isn't delivering: check it has the KV binding named KV and the cron trigger * * * * * (see README).");
+}
+function pgBindSettings(){
+  const b=$("bgMode");if(b){const r=()=>{b.textContent=PGA.bg?"BACKGROUND MODE: ON":"BACKGROUND MODE: OFF"};r();b.onclick=()=>{PGA.bg=!PGA.bg;pgLS.set("pianoGrindBg",PGA.bg);r();pgKAsync()}}
+  const w=$("settingsReport");if(w)w.onclick=()=>openReport(today==="Sunday"?0:-1);
+}
+
+/* ===== Piano Grind v23 : part B (notes, metronome, weekly report) ===== */
+/* ---------- notes ---------- */
+const NOTES_KEY="pianoGrindNotes";
+const ntAll=()=>pgLS.get(NOTES_KEY,[]);
+const ntSave=a=>pgLS.set(NOTES_KEY,a);
+const ntDate=ts=>new Date(ts).toLocaleDateString(undefined,{day:"numeric",month:"short"});
+let ntCur=null,ntQuery="";
+function ntOpen(){
+  const q=ntQuery.trim().toLowerCase(),all=ntAll().sort((a,b)=>b.upd-a.upd),list=q?all.filter(n=>(n.title+" "+n.body+" "+n.tag).toLowerCase().includes(q)):all;
+  openModal("Notes",`<div class="nt-bar"><input class="nt-in" id="ntSearch" placeholder="Search notes" value="${pgEsc(ntQuery)}"><button class="primary" id="ntNew" style="width:auto;padding:0 18px;white-space:nowrap">＋ New</button></div>
+  ${list.length?list.map(n=>`<button class="nt-card" data-id="${n.id}"><b>${pgEsc(n.title||n.body.split("\n")[0]||"Untitled")}</b><div class="s">${pgEsc(n.body)}</div><div class="m"><span class="nt-tag">${pgEsc(n.tag||"General")}</span><span>${ntDate(n.upd)}</span></div></button>`).join(""):`<div class="nt-empty">${q?"No notes match.":"Nothing here yet.<br>Jot down fingerings, tempos you reached, things to fix tomorrow."}</div>`}`);
+  $("ntNew").onclick=()=>ntEdit(null);
+  $("ntSearch").oninput=e=>{ntQuery=e.target.value;clearTimeout(ntOpen.t);ntOpen.t=setTimeout(()=>{ntOpen();const s=$("ntSearch");s.focus();s.setSelectionRange(s.value.length,s.value.length)},250)};
+  document.querySelectorAll(".nt-card").forEach(c=>c.onclick=()=>ntEdit(c.dataset.id));
+}
+function ntEdit(id){
+  const inSession=$("session").style.display==="grid";
+  let n=id?ntAll().find(x=>x.id===id):null;
+  ntCur=n?Object.assign({},n):{id:"n"+Date.now().toString(36),title:"",body:"",tag:inSession?((routine[idx]||[])[0]||"General"):"General",ts:Date.now(),upd:Date.now(),fresh:true};
+  openModal(id?"Edit note":"New note",`<input class="nt-in" id="ntTitle" placeholder="Title (optional)" value="${pgEsc(ntCur.title)}" style="margin-bottom:10px">
+  <textarea class="nt-in" id="ntBody" placeholder="Write here…">${pgEsc(ntCur.body)}</textarea>
+  <div class="nt-row"><span class="nt-tag" id="ntTag">${pgEsc(ntCur.tag)} · ${ntDate(ntCur.ts)}</span><span id="ntSaved" style="color:var(--muted);font-size:12px"></span></div>
+  <div class="nt-row"><button class="secondary" id="ntBack" style="flex:1">← ALL NOTES</button>${id?`<button class="secondary" id="ntDel" style="flex:1">DELETE</button>`:""}</div>`);
+  const save=()=>{ntCur.title=$("ntTitle").value;ntCur.body=$("ntBody").value;ntCur.upd=Date.now();
+    const a=ntAll(),i=a.findIndex(x=>x.id===ntCur.id),empty=!ntCur.title.trim()&&!ntCur.body.trim();
+    if(empty){if(i>=0)a.splice(i,1)}else{const c=Object.assign({},ntCur);delete c.fresh;if(i>=0)a[i]=c;else a.push(c)}
+    ntSave(a);const s=$("ntSaved");if(s){s.textContent=empty?"":"Saved ✓"}};
+  let t=null;const dsave=()=>{$("ntSaved").textContent="…";clearTimeout(t);t=setTimeout(save,350)};
+  $("ntTitle").oninput=dsave;$("ntBody").oninput=dsave;
+  $("ntBack").onclick=()=>{clearTimeout(t);save();ntOpen()};
+  if($("ntDel"))$("ntDel").onclick=function(){if(this.dataset.arm){clearTimeout(t);ntSave(ntAll().filter(x=>x.id!==ntCur.id));ntCur=null;ntOpen()}else{this.dataset.arm=1;this.textContent="TAP AGAIN TO DELETE";setTimeout(()=>{if(this&&this.isConnected){delete this.dataset.arm;this.textContent="DELETE"}},2500)}};
+  if(!id)setTimeout(()=>{try{$("ntBody").focus()}catch(e){}},60);
+}
+
+/* ---------- metronome ---------- */
+const MET_KEY="pianoGrindMetro";
+const metro=Object.assign({bpm:80,num:4,den:4,sub:1,acc:null,snd:"click",vol:.8,tr:{on:false,every:4,step:2,max:120}},pgLS.get(MET_KEY,{}));
+metro.running=false;
+function metDefAcc(n,d){const a=Array(n).fill(1);a[0]=3;if(d===8&&n%3===0&&n>=6){for(let i=3;i<n;i+=3)a[i]=2}else if(n===5&&d===4)a[3]=2;else if(n===7)a[2]=a[4]=2;return a}
+if(!Array.isArray(metro.acc)||metro.acc.length!==metro.num)metro.acc=metDefAcc(metro.num,metro.den);
+const metSave=()=>{const c=Object.assign({},metro);delete c.running;pgLS.set(MET_KEY,c)};
+const MET_NAMES=[[40,"Grave"],[60,"Largo"],[66,"Larghetto"],[76,"Adagio"],[108,"Andante"],[120,"Moderato"],[156,"Allegro"],[176,"Vivace"],[200,"Presto"],[999,"Prestissimo"]];
+const metName=b=>(MET_NAMES.find(x=>b<x[0])||MET_NAMES[9])[1];
+let mGain=null,mTimer=null,mNext=0,mBeat=0,mSub=0,mBars=0,mCount=0,mLog=[],mRAF=0,mTaps=[];
+function mClick(t,level,isSub){
+  const c=audioCtx;if(!mGain||mGain.context!==c){mGain=c.createGain();mGain.connect(c.destination)}mGain.gain.value=metro.vol;
+  const o=c.createOscillator(),g=c.createGain(),lv=isSub?0:level,a=isSub?.3:[0,.45,.72,1][level];
+  const F={click:[900,1300,1750,2300],wood:[520,700,900,1100],soft:[523,659,784,988]}[metro.snd]||[900,1300,1750,2300];
+  const f=isSub?F[0]*.85:F[lv],dec=metro.snd==="soft"?.14:metro.snd==="wood"?.08:.05;
+  o.type=metro.snd==="click"?"triangle":"sine";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.001,a),t+.002);g.gain.exponentialRampToValueAtTime(.0001,t+dec);
+  o.connect(g);g.connect(mGain);o.start(t);o.stop(t+dec+.03);
+  if(metro.snd==="wood"&&!isSub){const o2=c.createOscillator(),g2=c.createGain();o2.frequency.value=f*2.4;g2.gain.setValueAtTime(a*.3,t);g2.gain.exponentialRampToValueAtTime(.0001,t+.03);o2.connect(g2);g2.connect(mGain);o2.start(t);o2.stop(t+.05)}
+}
+function mSchedule(){
+  const c=audioCtx;if(!c)return;
+  while(mNext<c.currentTime+.12){
+    const lvl=metro.acc[mBeat]||0;
+    if(mSub===0){if(lvl>0)mClick(mNext,lvl,false);mLog.push({t:mNext,b:mBeat,k:mCount++});if(mLog.length>12)mLog.shift()}
+    else mClick(mNext,1,true);
+    mSub++;
+    if(mSub>=metro.sub){mSub=0;mBeat++;if(mBeat>=metro.num){mBeat=0;mBars++;
+      if(metro.tr.on&&mBars%metro.tr.every===0&&metro.bpm<metro.tr.max){metro.bpm=Math.min(metro.tr.max,metro.bpm+metro.tr.step);metSave();mPaintBpm()}}}
+    mNext+=60/metro.bpm/metro.sub;
+  }
+}
+async function mStart(){
+  const c=await readyAudio();mNext=c.currentTime+.1;mBeat=0;mSub=0;mBars=0;mCount=0;mLog=[];
+  clearInterval(mTimer);mTimer=setInterval(mSchedule,25);metro.running=true;mPaintRun();mFrame();
+}
+function mStop(){clearInterval(mTimer);mTimer=null;metro.running=false;mPaintRun()}
+function mPaintRun(){
+  const b=$("mtGo");if(b)b.textContent=metro.running?"■  STOP":"▶  START";
+  [$("metroBtn"),$("metroBtn2")].forEach(x=>x&&x.classList.toggle("on",metro.running));
+}
+function mPaintBpm(){
+  const n=$("mtN");if(!n)return;n.textContent=metro.bpm;$("mtName").textContent=metName(metro.bpm);$("mtRange").value=metro.bpm;
+  const t=(metro.bpm-20)/280,y=62+t*118,w=$("mtWt");if(w)w.setAttribute("y",y);
+}
+function mFrame(){
+  cancelAnimationFrame(mRAF);
+  const sw=$("mtSwing");if(!sw||!$("modal").classList.contains("open")){return}
+  const c=audioCtx,now=c?c.currentTime:0,rod=$("mtRod");let ang=0,act=-1;
+  if(metro.running&&c&&mLog.length){
+    let cur=null;for(const e of mLog)if(e.t<=now)cur=e;
+    if(cur){const ph=Math.min(1,(now-cur.t)/(60/metro.bpm));ang=(cur.k%2===0?1:-1)*26*Math.cos(Math.PI*ph);act=cur.b}
+  }
+  rod.setAttribute("transform","rotate("+ang.toFixed(2)+" 100 215)");
+  document.querySelectorAll(".mt-dot").forEach((d,i)=>d.classList.toggle("act",i===act));
+  mRAF=requestAnimationFrame(mFrame);
+}
+function mDots(){
+  const box=$("mtDots");if(!box)return;box.innerHTML=metro.acc.map((l,i)=>`<button class="mt-dot l${l}" data-i="${i}" aria-label="Beat ${i+1}"></button>`).join("");
+  box.querySelectorAll(".mt-dot").forEach(d=>d.onclick=()=>{const i=+d.dataset.i;metro.acc[i]=(metro.acc[i]+1)%4;if(metro.acc[i]===0&&metro.acc.every(x=>x===0))metro.acc[i]=1;metSave();mDots()});
+}
+function mSetSig(n,d){metro.num=Math.max(1,Math.min(16,n));metro.den=d;metro.acc=metDefAcc(metro.num,metro.den);mBeat=0;metSave();metOpen()}
+function mBump(d){metro.bpm=Math.max(20,Math.min(300,metro.bpm+d));metSave();mPaintBpm()}
+function metOpen(){
+  const sigs=[[2,4],[3,4],[4,4],[5,4],[6,8],[7,8],[9,8],[12,8]],subs=[[1,"♩"],[2,"♪♪"],[3,"♪♪♪ triplet"],[4,"♬♬ 16ths"]];
+  openModal("Metronome",`
+  <div class="mt-top">
+    <svg class="mt-swing" id="mtSwing" viewBox="0 0 200 260" aria-hidden="true"><path class="body" d="M52 252 L148 252 L120 118 L80 118 Z"/><g id="mtRod"><line class="rod" x1="100" y1="215" x2="100" y2="38"/><rect class="wt" id="mtWt" x="86" y="100" width="28" height="22" rx="6"/></g><circle class="piv" cx="100" cy="215" r="7"/></svg>
+    <div class="mt-bpm"><div class="n" id="mtN">${metro.bpm}</div><div class="u">BPM · ${metro.den===8?"♪":"♩"} = ${metro.bpm}</div><div class="nm" id="mtName">${metName(metro.bpm)}</div><div class="mt-dots" id="mtDots"></div></div>
+  </div>
+  <div class="mt-tempo"><button class="secondary" data-b="-5">−5</button><button class="secondary" data-b="-1">−</button><input type="range" id="mtRange" min="20" max="300" value="${metro.bpm}" aria-label="Tempo"><button class="secondary" data-b="1">＋</button><button class="secondary" data-b="5">+5</button></div>
+  <div class="mt-go"><button class="secondary" id="mtTap">TAP</button><button class="primary" id="mtGo">${metro.running?"■  STOP":"▶  START"}</button></div>
+  <div class="mt-lbl">Time signature</div><div class="mt-chips">${sigs.map(([n,d])=>`<button class="mt-chip${metro.num===n&&metro.den===d?" active":""}" data-sig="${n}/${d}">${n}/${d}</button>`).join("")}</div>
+  <div class="mt-lbl">Custom</div><div class="mt-chips" style="align-items:center"><span class="mt-step"><button class="secondary" id="mtNm">−</button><span>${metro.num}</span><button class="secondary" id="mtNp">＋</button></span><span style="color:var(--muted)">beats of</span>${[2,4,8,16].map(d=>`<button class="mt-chip${metro.den===d?" active":""}" data-den="${d}">${d}</button>`).join("")}</div>
+  <div class="mt-lbl">Subdivision</div><div class="mt-chips">${subs.map(([v,l])=>`<button class="mt-chip${metro.sub===v?" active":""}" data-sub="${v}">${l}</button>`).join("")}</div>
+  <div class="mt-lbl">Sound</div><div class="mt-chips">${[["click","Click"],["wood","Wood"],["soft","Soft"]].map(([v,l])=>`<button class="mt-chip${metro.snd===v?" active":""}" data-snd="${v}">${l}</button>`).join("")}</div>
+  <input class="vol" id="mtVol" type="range" min="5" max="100" value="${Math.round(metro.vol*100)}" aria-label="Metronome volume">
+  <div class="mt-lbl">Speed trainer</div>
+  <div class="mt-train"><div class="r"><span>Raise the tempo automatically</span><button class="mt-chip${metro.tr.on?" active":""}" id="mtTrOn">${metro.tr.on?"ON":"OFF"}</button></div>
+  <div class="r"><span>Every</span><span class="mt-step"><button class="secondary" data-tr="every-1">−</button><span>${metro.tr.every}</span><button class="secondary" data-tr="every+1">＋</button></span><span>bars</span></div>
+  <div class="r"><span>Add</span><span class="mt-step"><button class="secondary" data-tr="step-1">−</button><span>${metro.tr.step}</span><button class="secondary" data-tr="step+1">＋</button></span><span>BPM</span></div>
+  <div class="r"><span>Up to</span><span class="mt-step"><button class="secondary" data-tr="max-5">−</button><span>${metro.tr.max}</span><button class="secondary" data-tr="max+5">＋</button></span><span>BPM</span></div></div>
+  <div style="color:var(--muted);font-size:12px;margin-top:14px;line-height:1.5">Tap a beat dot to cycle strong, medium, normal and silent. The metronome keeps running if you close this sheet.</div>`);
+  mDots();mPaintBpm();mFrame();
+  $("mtGo").onclick=()=>metro.running?mStop():mStart();
+  $("mtRange").oninput=e=>{metro.bpm=+e.target.value;metSave();mPaintBpm()};
+  document.querySelectorAll("[data-b]").forEach(b=>{const d=+b.dataset.b;let h=null,r=null;
+    const stop=()=>{clearTimeout(h);clearInterval(r)};b.onpointerdown=()=>{mBump(d);h=setTimeout(()=>{r=setInterval(()=>mBump(d),90)},420)};["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,stop))});
+  $("mtTap").onclick=()=>{const t=performance.now();if(mTaps.length&&t-mTaps[mTaps.length-1]>2500)mTaps=[];mTaps.push(t);if(mTaps.length>5)mTaps.shift();
+    if(mTaps.length>=2){const iv=(mTaps[mTaps.length-1]-mTaps[0])/(mTaps.length-1);metro.bpm=Math.max(20,Math.min(300,Math.round(60000/iv)));metSave();mPaintBpm()}};
+  document.querySelectorAll("[data-sig]").forEach(b=>b.onclick=()=>{const[n,d]=b.dataset.sig.split("/").map(Number);mSetSig(n,d)});
+  $("mtNm").onclick=()=>mSetSig(metro.num-1,metro.den);$("mtNp").onclick=()=>mSetSig(metro.num+1,metro.den);
+  document.querySelectorAll("[data-den]").forEach(b=>b.onclick=()=>mSetSig(metro.num,+b.dataset.den));
+  document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>{metro.sub=+b.dataset.sub;mSub=0;metSave();metOpen()});
+  document.querySelectorAll("[data-snd]").forEach(b=>b.onclick=()=>{metro.snd=b.dataset.snd;metSave();metOpen();if(!metro.running)readyAudio().then(c=>{mClick(c.currentTime+.05,3,false)})});
+  $("mtVol").oninput=e=>{metro.vol=e.target.value/100;if(mGain)mGain.gain.value=metro.vol;metSave()};
+  $("mtTrOn").onclick=()=>{metro.tr.on=!metro.tr.on;metSave();metOpen()};
+  document.querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{const m=b.dataset.tr.match(/^(\w+)([+-])(\d+)$/),k=m[1],d=(m[2]==="+"?1:-1)*Number(m[3]);
+    const lim={every:[1,64],step:[1,20],max:[30,300]}[k];metro.tr[k]=Math.max(lim[0],Math.min(lim[1],metro.tr[k]+d));metSave();metOpen()});
+}
+
+/* ---------- weekly report ---------- */
+const DAYS6=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function dkey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function pgWeek(offset){
+  const t=new Date();t.setHours(12,0,0,0);const dow=t.getDay(),mon=new Date(t);
+  mon.setDate(t.getDate()-(dow===0?6:dow-1)+offset*-7*-1);
+  const todayK=dkey(new Date()),store=completionStore(),log=pgLS.get("pianoGrindLog",{}),days=[];let redoBlocks=0,redoMins=0;
+  for(let i=0;i<6;i++){
+    const dt=new Date(mon);dt.setDate(mon.getDate()+i);const k=dkey(dt),name=DAYS6[i],r=routines[name],L=(log[k]||{})[name],S=(store[k]||{})[name];
+    let names=[];if(L&&L.names)names=L.names;else if(Array.isArray(S))names=S.map(x=>r[x]&&r[x][0]).filter(Boolean);
+    const lit=r.map(b=>names.includes(b[0])),mins=r.reduce((a,b,j)=>a+(lit[j]?Number(b[1]):0),0);
+    const R=(store[k]||{})[name+"__redo"];if(Array.isArray(R)){redoBlocks+=R.length;redoMins+=R.reduce((a,x)=>a+(r[x]?Number(r[x][1]):0),0)}
+    days.push({name,k,dt,r,lit,done:lit.filter(Boolean).length,total:r.length,mins,missed:r.filter((b,j)=>!lit[j]).map(b=>b[0]),future:k>todayK||(k===todayK&&!lit.some(Boolean)&&today!=="Sunday"),today:k===todayK});
+  }
+  return {days,mon,redoBlocks,redoMins};
+}
+function pgGrade(p,n){
+  if(!n)return["Rest week","No practice logged. A week off is data, not a verdict. Start Monday with just the Warm-up."];
+  if(p<35)return["Getting started","A few blocks in. The hardest part is the routine itself. Aim to finish Core on three days next week."];
+  if(p<60)return["Building","Real work happened. Consistency beats intensity, so protect the days you're strongest."];
+  if(p<80)return["Solid week","More than half the routine, most days. A little tightening and this becomes a great week."];
+  if(p<95)return["Strong week","You did the work. The skipped blocks below are your free upside."];
+  return["Virtuoso week","Practically every block, every day. This is how technique is built. Enjoy your Sunday."];
+}
+function openReport(offset){
+  const W=pgWeek(offset),past=W.days.filter(d=>!d.future),sched=past.reduce((a,d)=>a+d.total,0),done=past.reduce((a,d)=>a+d.done,0),mins=past.reduce((a,d)=>a+d.mins,0);
+  const pct=sched?Math.round(done/sched*100):0,pdays=past.filter(d=>d.done>0).length,perfect=past.filter(d=>d.done===d.total).length;
+  const coreS=past.reduce((a,d)=>a+SPOT,0),coreD=past.reduce((a,d)=>a+d.lit.slice(0,SPOT).filter(Boolean).length,0),spS=past.reduce((a,d)=>a+d.total-SPOT,0),spD=done-coreD;
+  const cp=coreS?Math.round(coreD/coreS*100):0,sp=spS?Math.round(spD/spS*100):0;
+  const miss={};past.forEach(d=>d.r.forEach((b,j)=>{const m=miss[b[0]]=miss[b[0]]||{s:0,d:0};m.s++;if(d.lit[j])m.d++}));
+  const arr=Object.entries(miss),skipped=arr.filter(([n,m])=>m.s-m.d>0).sort((a,b)=>(b[1].s-b[1].d)-(a[1].s-a[1].d)||(b[1].s-b[1].d)/b[1].s-(a[1].s-a[1].d)/a[1].s).slice(0,3),solid=arr.filter(([n,m])=>m.d===m.s&&m.s>=2).slice(0,3);
+  const [g,gl]=pgGrade(pct,done),circ=2*Math.PI*45,hm=m=>m>=60?Math.floor(m/60)+"h "+String(m%60).padStart(2,"0")+"m":m+"m";
+  const fmtD=d=>d.toLocaleDateString(undefined,{day:"numeric",month:"short"}),range=fmtD(W.days[0].dt)+" – "+fmtD(W.days[5].dt);
+  const notes=[];
+  if(done){
+    if(perfect)notes.push(`${perfect} perfect day${perfect>1?"s":""}: all ${W.days[0].total} blocks.`);
+    if(pdays<=3)notes.push("Try for five practice days next week. Even a half-length day keeps the habit alive.");
+    if(cp-sp>=15)notes.push("Spotlight is where it slips. Those blocks come after the break, so keep the break to five minutes and go back in.");
+    else if(sp-cp>=15)notes.push("You're finishing Spotlight but skipping Core blocks. Don't skip the Warm-up and Sight-Reading, they set up everything else.");
+    if(W.redoBlocks)notes.push(`Make-up sessions: ${W.redoBlocks} block${W.redoBlocks>1?"s":""}, ${hm(W.redoMins)} extra. Good recovery.`);
+  }
+  const focus=skipped.length?`Next week's focus: <b style="display:inline;color:var(--text);font-size:inherit;letter-spacing:0;margin:0">${pgEsc(skipped[0][0])}</b>. Give it the freshest 20 minutes of the session.`:(done?"Nothing skipped. Next week's focus is quality: slower, cleaner, evener.":"Next week's focus: show up for the Warm-up. Everything else follows.");
+  const dayRows=W.days.map(d=>{
+    const keys=d.r.map((b,j)=>(j===SPOT?`<i class="gap"></i>`:"")+`<i class="${d.lit[j]?"on":""}" title="${pgEsc(b[0])}"></i>`).join("");
+    const st=d.future?"upcoming":(d.done===d.total?"✓ "+d.done+"/"+d.total:d.done+"/"+d.total)+" · "+hm(d.mins);
+    return `<div class="rp-day"><b>${d.name.slice(0,3).toUpperCase()}</b><div class="rp-keys" style="opacity:${d.future?.35:1}">${keys}</div><small>${st}</small>${(!d.future&&d.done&&d.done<d.total)?`<div class="rp-miss">Missed: ${d.missed.map(pgEsc).join(", ")}</div>`:""}${(!d.future&&!d.done&&!d.today)?`<div class="rp-miss">No practice logged.</div>`:""}</div>`}).join("");
+  openModal("Weekly Report",`
+  <div class="rp-tabs"><button class="mt-chip${offset===-1?" active":""}" data-rp="-1">Last week</button><button class="mt-chip${offset===0?" active":""}" data-rp="0">This week</button></div>
+  <div class="rp-hero"><div class="rp-ring"><svg viewBox="0 0 104 104"><circle class="bg" cx="52" cy="52" r="45"/><circle class="fg" cx="52" cy="52" r="45" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${(circ*(1-pct/100)).toFixed(1)}"/></svg><div class="pc">${pct}%</div></div>
+  <div><h3>${g}</h3><p>${range}<br>${gl}</p></div></div>
+  <div class="rp-stats"><div class="rp-stat"><b>${pdays}/${past.length}</b><span>DAYS</span></div><div class="rp-stat"><b>${done}/${sched}</b><span>BLOCKS</span></div><div class="rp-stat"><b>${hm(mins)}</b><span>PLAYED</span></div></div>
+  <div class="rp-box" style="margin-top:0"><b>EVERY DAY</b>${dayRows}</div>
+  <div class="rp-two"><div class="rp-box"><b>CORE · ${cp}%</b>${coreD} of ${coreS} blocks</div><div class="rp-box"><b>SPOTLIGHT · ${sp}%</b>${spD} of ${spS} blocks</div></div>
+  <div class="rp-two"><div class="rp-box"><b>MOST SKIPPED</b>${skipped.length?`<ul>${skipped.map(([n,m])=>`<li>${pgEsc(n)} · missed ${m.s-m.d} of ${m.s}</li>`).join("")}</ul>`:"Nothing. Every block you scheduled got done."}</div><div class="rp-box"><b>ROCK SOLID</b>${solid.length?`<ul>${solid.map(([n,m])=>`<li>${pgEsc(n)} · ${m.d}/${m.s}</li>`).join("")}</ul>`:"Nothing repeated every time yet."}</div></div>
+  ${notes.length?`<div class="rp-box"><b>COACH NOTES</b><ul>${notes.map(x=>`<li>${x}</li>`).join("")}</ul></div>`:""}
+  <div class="rp-box"><b>NEXT WEEK</b>${focus}</div>
+  <div class="rp-box"><b>SUNDAY RESET</b><ul><li>Pick one skipped or shaky thing and diagnose it slowly for ten minutes.</li><li>Play something purely for fun. No timer.</li><li>Rest your hands. Set one intention for Monday.</li></ul></div>`);
+  document.querySelectorAll("[data-rp]").forEach(b=>b.onclick=()=>openReport(Number(b.dataset.rp)));
+}
+
+/* ---------- wire up the tool buttons ---------- */
+["notesBtn","notesBtn2"].forEach(id=>{const b=$(id);if(b)b.onclick=()=>{ntQuery="";ntOpen()}});
+["metroBtn","metroBtn2"].forEach(id=>{const b=$(id);if(b)b.onclick=metOpen});
+$("weeklyBtn").onclick=()=>openReport(0);
+$("close").addEventListener("click",()=>cancelAnimationFrame(mRAF));
+updateDashboardState();
+restoreBreak();
+pgKAsync();
+
 </script>
 <script id="redo-day-script">
 
